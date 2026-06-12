@@ -2,7 +2,7 @@ services:
   - type: redis
     name: ai-agent-redis
     region: singapore
-    plan: starter
+    plan: free
     ipAllowList: []
 
   - type: web
