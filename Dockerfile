@@ -1,0 +1,36 @@
+# Root Dockerfile for Railway/GitHub deployments.
+# The final application lives in 06-lab-complete.
+
+FROM python:3.11-slim AS builder
+
+WORKDIR /build
+
+COPY 06-lab-complete/requirements.txt .
+RUN pip install --no-cache-dir --user -r requirements.txt
+
+
+FROM python:3.11-slim AS runtime
+
+RUN groupadd -r agent && useradd -r -g agent -m -d /home/agent agent
+
+WORKDIR /app
+
+COPY --from=builder /root/.local /home/agent/.local
+COPY 06-lab-complete/app/ ./app/
+COPY 06-lab-complete/utils/ ./utils/
+
+RUN chown -R agent:agent /app
+
+USER agent
+
+ENV PATH=/home/agent/.local/bin:$PATH
+ENV PYTHONPATH=/app
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+
+EXPOSE 8000
+
+HEALTHCHECK --interval=30s --timeout=10s --start-period=15s --retries=3 \
+    CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')" || exit 1
+
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "2"]
