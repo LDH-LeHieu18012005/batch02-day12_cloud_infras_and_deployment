@@ -103,13 +103,23 @@ railway up
 railway domain
 ```
 
-Public URL: fill in after real deployment.
+Public URL: https://ai-agent-production-djyv.onrender.com
 
 Local verification: `03-cloud-deployment/railway` was run in a Python container and returned `200` for `/health` and `/ask`.
 
 ### Exercise 3.2: Render deployment
 
 Render can use `06-lab-complete/render.yaml`. The blueprint defines a web service and Redis service, and injects `REDIS_URL` into the app.
+
+Public Render verification:
+
+```text
+GET /health -> 200
+GET /ready -> 200
+POST /ask without API key -> 401
+POST /ask with API key -> 200
+Rate limit test -> 200 for the first 10 requests, then 429
+```
 
 ### Exercise 3.3: GCP Cloud Run
 

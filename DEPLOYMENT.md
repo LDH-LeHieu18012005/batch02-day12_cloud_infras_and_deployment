@@ -2,15 +2,13 @@
 
 ## Public URL
 
-Fill this in after deploying with your own Railway or Render account:
-
 ```text
-https://your-agent-url.example
+https://ai-agent-production-djyv.onrender.com
 ```
 
 ## Platform
 
-Recommended: Render Blueprint or Railway.
+Render Blueprint with a Render Key Value Redis-compatible service.
 
 ## Required Environment Variables
 
@@ -25,7 +23,12 @@ Recommended: Render Blueprint or Railway.
 
 ## Test Commands
 
-Replace `$URL` and `$KEY` with the real deployment values.
+Use:
+
+```bash
+URL=https://ai-agent-production-djyv.onrender.com
+KEY=<AGENT_API_KEY from Render Environment>
+```
 
 ### Health Check
 
@@ -80,8 +83,18 @@ Expected: requests eventually return `429`.
 
 ## Screenshots
 
-Place real deployment screenshots here after deployment:
+Deployment evidence:
 
 - `screenshots/dashboard.png`
 - `screenshots/running.png`
 - `screenshots/test.png`
+
+## Verified Results
+
+Public deployment was tested on 2026-06-12:
+
+- `GET /health` -> `200 OK`
+- `GET /ready` -> `200 OK`
+- `POST /ask` without `X-API-Key` -> `401 Unauthorized`
+- `POST /ask` with `X-API-Key` -> `200 OK`
+- Rate limit test -> first 10 authenticated requests returned `200`, then requests returned `429`
